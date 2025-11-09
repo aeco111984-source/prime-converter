@@ -1,0 +1,1 @@
+console.log("Prime Converter is running smoothly.");

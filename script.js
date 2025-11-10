@@ -1,56 +1,80 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const amount = document.getElementById("amount");
-  const from = document.getElementById("from");
-  const to = document.getElementById("to");
-  const interbank = document.getElementById("interbank");
-  const broker = document.getElementById("broker");
-  const spread = document.getElementById("spread");
+  const amountEl = document.getElementById("amount");
+  const fromEl = document.getElementById("from");
+  const toEl = document.getElementById("to");
+  const headlineEl = document.getElementById("headline");
+  const ratesEl = document.getElementById("rates");
+  const interbankEl = document.getElementById("interbank");
+  const brokerEl = document.getElementById("broker");
+  const spreadEl = document.getElementById("spread");
+  const providerTable = document.getElementById("providers");
+  const timeEl = document.getElementById("time");
 
-  const convertBtn = document.getElementById("convert");
-  const swapBtn = document.getElementById("swap");
-
-  const providerList = document.getElementById("providers");
-
-  // Mock conversion rates (real APIs later)
-  const mockRates = {
-    USD: { EUR: 0.93, GBP: 0.78, JPY: 151 },
-    EUR: { USD: 1.07, GBP: 0.84, JPY: 162 },
-    GBP: { USD: 1.28, EUR: 1.19, JPY: 191 },
+  const rates = {
+    USD: { EUR: 0.93, GBP: 0.78, JPY: 151.2, CAD: 1.36 },
+    EUR: { USD: 1.07, GBP: 0.84, JPY: 162.5, CAD: 1.46 },
+    GBP: { USD: 1.28, EUR: 1.19, JPY: 191.3, CAD: 1.74 },
+    JPY: { USD: 0.0066, EUR: 0.0062, GBP: 0.0052, CAD: 0.0091 },
+    CAD: { USD: 0.74, EUR: 0.68, GBP: 0.57, JPY: 109.3 },
   };
 
-  convertBtn.addEventListener("click", () => {
-    const amt = parseFloat(amount.value);
-    const base = from.value;
-    const quote = to.value;
+  function updateTime() {
+    const now = new Date();
+    timeEl.textContent = now.toUTCString().split(" ")[4];
+  }
 
-    if (!mockRates[base] || !mockRates[base][quote]) {
-      alert("Conversion pair not found (demo data only)");
+  function convert() {
+    const amount = parseFloat(amountEl.value);
+    const base = fromEl.value;
+    const quote = toEl.value;
+
+    if (!rates[base] || !rates[base][quote]) {
+      alert("Conversion not available for this pair.");
       return;
     }
 
-    const midRate = mockRates[base][quote];
-    const brokerRate = midRate * (1 - 0.006); // 0.6% spread
-    const diff = ((midRate - brokerRate) / midRate) * 100;
+    const interbankRate = rates[base][quote];
+    const brokerRate = interbankRate * (1 - 0.004);
+    const spread = ((interbankRate - brokerRate) / interbankRate) * 100;
 
-    const convertedInterbank = amt * midRate;
-    const convertedBroker = amt * brokerRate;
+    const interbankTotal = (amount * interbankRate).toFixed(2);
+    const brokerTotal = (amount * brokerRate).toFixed(2);
 
-    interbank.textContent = `${midRate.toFixed(4)} (${convertedInterbank.toFixed(2)} ${quote})`;
-    broker.textContent = `${brokerRate.toFixed(4)} (${convertedBroker.toFixed(2)} ${quote})`;
-    spread.textContent = `${diff.toFixed(2)}%`;
+    headlineEl.textContent = `${amount} ${base} = ${interbankTotal} ${quote}`;
+    ratesEl.textContent = `1 ${base} = ${interbankRate.toFixed(4)} ${quote} | 1 ${quote} = ${(1 / interbankRate).toFixed(4)} ${base}`;
+    interbankEl.textContent = interbankRate.toFixed(4);
+    brokerEl.textContent = brokerRate.toFixed(4);
+    spreadEl.textContent = spread.toFixed(2) + "%";
 
-    // Update mock provider list
-    providerList.innerHTML = `
-      <li>Western Union: ${(brokerRate * 0.99).toFixed(4)}</li>
-      <li>Wise: ${(brokerRate * 1.001).toFixed(4)}</li>
-      <li>MoneyGram: ${(brokerRate * 0.98).toFixed(4)}</li>
-      <li>Revolut: ${(brokerRate * 1.002).toFixed(4)}</li>
-    `;
+    const providers = [
+      { id: "wise", name: "Wise", rate: brokerRate * 1.001, fee: 0.99 },
+      { id: "western", name: "Western Union", rate: brokerRate * 0.985, fee: 2.90 },
+      { id: "moneygram", name: "MoneyGram", rate: brokerRate * 0.982, fee: 1.99 },
+      { id: "revolut", name: "Revolut", rate: brokerRate * 1.002, fee: 0 },
+    ];
+
+    let best = providers.reduce((a, b) => (a.rate > b.rate ? a : b));
+
+    providers.forEach(p => {
+      const row = document.getElementById(p.id);
+      const total = (amount * p.rate - p.fee).toFixed(2);
+      row.children[1].textContent = p.rate.toFixed(4);
+      row.children[2].textContent = p.fee.toFixed(2) + " " + base;
+      row.children[3].textContent = total + " " + quote;
+      row.style.background = p.id === best.id ? "rgba(0,61,153,0.1)" : "transparent";
+    });
+
+    updateTime();
+  }
+
+  document.getElementById("convert").addEventListener("click", convert);
+  document.getElementById("swap").addEventListener("click", () => {
+    const temp = fromEl.value;
+    fromEl.value = toEl.value;
+    toEl.value = temp;
+    convert();
   });
 
-  swapBtn.addEventListener("click", () => {
-    const temp = from.value;
-    from.value = to.value;
-    to.value = temp;
-  });
+  convert();
+  updateTime();
 });

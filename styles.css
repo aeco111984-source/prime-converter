@@ -1,158 +1,80 @@
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background: #f4f7fb;
-  color: #111;
-}
+document.addEventListener("DOMContentLoaded", () => {
+  const amountEl = document.getElementById("amount");
+  const fromEl = document.getElementById("from");
+  const toEl = document.getElementById("to");
+  const headlineEl = document.getElementById("headline");
+  const ratesEl = document.getElementById("rates");
+  const interbankEl = document.getElementById("interbank");
+  const brokerEl = document.getElementById("broker");
+  const spreadEl = document.getElementById("spread");
+  const providerTable = document.getElementById("providers");
+  const timeEl = document.getElementById("time");
 
-header {
-  text-align: center;
-  background: #0a3d91;
-  color: white;
-  padding: 1.5rem 1rem;
-}
+  const rates = {
+    USD: { EUR: 0.93, GBP: 0.78, JPY: 151.2, CAD: 1.36 },
+    EUR: { USD: 1.07, GBP: 0.84, JPY: 162.5, CAD: 1.46 },
+    GBP: { USD: 1.28, EUR: 1.19, JPY: 191.3, CAD: 1.74 },
+    JPY: { USD: 0.0066, EUR: 0.0062, GBP: 0.0052, CAD: 0.0091 },
+    CAD: { USD: 0.74, EUR: 0.68, GBP: 0.57, JPY: 109.3 },
+  };
 
-h1 {
-  margin: 0;
-  font-size: 1.8rem;
-}
+  function updateTime() {
+    const now = new Date();
+    timeEl.textContent = now.toUTCString().split(" ")[4];
+  }
 
-.tagline {
-  font-size: 1rem;
-  opacity: 0.9;
-}
+  function convert() {
+    const amount = parseFloat(amountEl.value);
+    const base = fromEl.value;
+    const quote = toEl.value;
 
-main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  padding: 2rem 1rem;
-}
+    if (!rates[base] || !rates[base][quote]) {
+      alert("Conversion not available for this pair.");
+      return;
+    }
 
-.converter-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
+    const interbankRate = rates[base][quote];
+    const brokerRate = interbankRate * (1 - 0.004);
+    const spread = ((interbankRate - brokerRate) / interbankRate) * 100;
 
-.converter-card h2 {
-  margin-top: 0;
-  text-align: center;
-  color: #0a3d91;
-}
+    const interbankTotal = (amount * interbankRate).toFixed(2);
+    const brokerTotal = (amount * brokerRate).toFixed(2);
 
-.converter-card label {
-  font-weight: 600;
-}
+    headlineEl.textContent = `${amount} ${base} = ${interbankTotal} ${quote}`;
+    ratesEl.textContent = `1 ${base} = ${interbankRate.toFixed(4)} ${quote} | 1 ${quote} = ${(1 / interbankRate).toFixed(4)} ${base}`;
+    interbankEl.textContent = interbankRate.toFixed(4);
+    brokerEl.textContent = brokerRate.toFixed(4);
+    spreadEl.textContent = spread.toFixed(2) + "%";
 
-.converter-card input,
-.converter-card select {
-  width: 100%;
-  padding: 0.8rem;
-  margin: 0.5rem 0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
-}
+    const providers = [
+      { id: "wise", name: "Wise", rate: brokerRate * 1.001, fee: 0.99 },
+      { id: "western", name: "Western Union", rate: brokerRate * 0.985, fee: 2.90 },
+      { id: "moneygram", name: "MoneyGram", rate: brokerRate * 0.982, fee: 1.99 },
+      { id: "revolut", name: "Revolut", rate: brokerRate * 1.002, fee: 0 },
+    ];
 
-.dropdowns {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-}
+    let best = providers.reduce((a, b) => (a.rate > b.rate ? a : b));
 
-#swap {
-  font-size: 1.2rem;
-  padding: 0.5rem 0.8rem;
-  border: none;
-  background: #0a3d91;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-}
+    providers.forEach(p => {
+      const row = document.getElementById(p.id);
+      const total = (amount * p.rate - p.fee).toFixed(2);
+      row.children[1].textContent = p.rate.toFixed(4);
+      row.children[2].textContent = p.fee.toFixed(2) + " " + base;
+      row.children[3].textContent = total + " " + quote;
+      row.style.background = p.id === best.id ? "rgba(0,61,153,0.1)" : "transparent";
+    });
 
-#convert {
-  width: 100%;
-  background: #0a3d91;
-  color: white;
-  font-weight: bold;
-  padding: 0.9rem;
-  border: none;
-  border-radius: 8px;
-  margin-top: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
+    updateTime();
+  }
 
-#convert:hover {
-  background: #09407e;
-}
+  document.getElementById("convert").addEventListener("click", convert);
+  document.getElementById("swap").addEventListener("click", () => {
+    const temp = fromEl.value;
+    fromEl.value = toEl.value;
+    toEl.value = temp;
+    convert();
+  });
 
-#result {
-  text-align: center;
-  margin-top: 1rem;
-}
-
-.rate-text {
-  font-size: 1rem;
-  margin: 0.2rem 0;
-}
-
-.broker {
-  color: #b22222;
-}
-
-.spread {
-  color: #0a3d91;
-  font-weight: 600;
-  margin-top: 0.8rem;
-}
-
-.compare-section {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  max-width: 420px;
-  width: 100%;
-}
-
-.compare-section h3 {
-  margin-top: 0;
-  color: #0a3d91;
-}
-
-#providers {
-  list-style: none;
-  padding: 0;
-}
-
-#providers li {
-  margin: 0.5rem 0;
-}
-
-#details {
-  width: 100%;
-  background: #e6ecf5;
-  color: #0a3d91;
-  font-weight: 600;
-  border: none;
-  padding: 0.8rem;
-  border-radius: 8px;
-  margin-top: 0.8rem;
-  cursor: pointer;
-}
-
-footer {
-  text-align: center;
-  padding: 1.5rem 1rem;
-  background: #0a3d91;
-  color: white;
-  margin-top: 2rem;
-}
+  convert();
+  updateTime();
+});

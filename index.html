@@ -2,73 +2,105 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prime Converter – Smarter Currency Rates</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EUR to USD – Convert Euros to US Dollars | Prime Converter</title>
+  <meta name="description" content="Convert EUR to USD with mid-market and broker rates. See real-time spreads and compare money transfer providers worldwide." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <h1>🌐 Prime Converter</h1>
-    <p>Real-Time Currency & Transfer Rate Comparison</p>
+  <header class="site-header">
+    <div class="brand">🌐 Prime Converter</div>
+    <div class="strap">Live Exchange Rate • Updated Automatically</div>
   </header>
 
   <main>
-    <section class="converter">
-      <h2 id="headline">100 USD = — EUR</h2>
+    <!-- Converter card -->
+    <section class="card converter">
+      <h1 class="page-title">EUR to USD – Convert Euros to US Dollars</h1>
 
-      <div class="row amount">
-        <label>Amount</label>
-        <input type="number" id="amount" value="100" min="1" step="0.01" />
+      <h2 class="headline" id="headline">100 EUR = — USD</h2>
+
+      <div class="field">
+        <label for="amount">Amount</label>
+        <input id="amount" type="number" inputmode="decimal" value="100" min="0" step="0.01" />
       </div>
 
-      <div class="row pair">
-        <select id="from">
-          <option value="USD" selected>🇺🇸 USD – US Dollar</option>
-          <option value="EUR">🇪🇺 EUR – Euro</option>
-          <option value="GBP">🇬🇧 GBP – British Pound</option>
-          <option value="JPY">🇯🇵 JPY – Japanese Yen</option>
-          <option value="CAD">🇨🇦 CAD – Canadian Dollar</option>
-        </select>
+      <div class="pair-row">
+        <div class="select-wrap">
+          <label class="mini">From</label>
+          <select id="from">
+            <option value="EUR" selected>🇪🇺 EUR — Euro</option>
+            <option value="USD">🇺🇸 USD — US Dollar</option>
+            <option value="GBP">🇬🇧 GBP — British Pound</option>
+            <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+            <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+          </select>
+        </div>
 
-        <button id="swap">⇄</button>
+        <button id="swap" class="swap" aria-label="Swap currencies">⇄</button>
 
-        <select id="to">
-          <option value="EUR" selected>🇪🇺 EUR – Euro</option>
-          <option value="USD">🇺🇸 USD – US Dollar</option>
-          <option value="GBP">🇬🇧 GBP – British Pound</option>
-          <option value="JPY">🇯🇵 JPY – Japanese Yen</option>
-          <option value="CAD">🇨🇦 CAD – Canadian Dollar</option>
-        </select>
+        <div class="select-wrap">
+          <label class="mini">To</label>
+          <select id="to">
+            <option value="USD" selected>🇺🇸 USD — US Dollar</option>
+            <option value="EUR">🇪🇺 EUR — Euro</option>
+            <option value="GBP">🇬🇧 GBP — British Pound</option>
+            <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+            <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+          </select>
+        </div>
       </div>
 
-      <button id="convert" class="convert">Convert</button>
+      <button id="convert" class="btn-primary">Convert</button>
 
-      <div id="details" class="details">
-        <p id="rates">1 USD = — EUR | 1 EUR = — USD</p>
-        <p>Interbank Rate: <span id="interbank">—</span> • Broker: <span id="broker">—</span> • Spread: <span id="spread">—</span></p>
+      <div class="result-block">
+        <div id="pair-lines" class="pair-lines">
+          <div id="lineA">1 EUR = — USD</div>
+          <div id="lineB">1 USD = — EUR</div>
+        </div>
+
+        <div class="meta-lines">
+          <div>Interbank Rate: <strong id="interbank">—</strong></div>
+          <div>Broker Rate: <strong id="broker">—</strong></div>
+          <div>Spread: <strong id="spread">—</strong></div>
+        </div>
+
+        <div class="timestamp">Updated at <span id="time">—:—:—</span> GMT • Source: Prime Interbank (mock)</div>
       </div>
     </section>
 
-    <section class="providers">
-      <h3>💱 Compare Money Transfer Providers</h3>
-      <div class="table" id="providers">
-        <div class="header-row">
+    <!-- Providers table -->
+    <section class="card providers">
+      <h3>Compare Money Transfer Providers</h3>
+      <div class="table">
+        <div class="row header">
           <span>Provider</span><span>Rate</span><span>Fee</span><span>Total Received</span>
         </div>
         <div class="row" id="wise"><span>Wise</span><span>—</span><span>—</span><span>—</span></div>
         <div class="row" id="western"><span>Western Union</span><span>—</span><span>—</span><span>—</span></div>
         <div class="row" id="moneygram"><span>MoneyGram</span><span>—</span><span>—</span><span>—</span></div>
         <div class="row" id="revolut"><span>Revolut</span><span>—</span><span>—</span><span>—</span></div>
+        <div class="row" id="remitly"><span>Remitly</span><span>—</span><span>—</span><span>—</span></div>
+        <div class="row" id="xoom"><span>Xoom (PayPal)</span><span>—</span><span>—</span><span>—</span></div>
+        <div class="row" id="ofx"><span>OFX</span><span>—</span><span>—</span><span>—</span></div>
+        <div class="row" id="worldremit"><span>WorldRemit</span><span>—</span><span>—</span><span>—</span></div>
+        <div class="row" id="currencyfair"><span>CurrencyFair</span><span>—</span><span>—</span><span>—</span></div>
+        <div class="row" id="skrill"><span>Skrill</span><span>—</span><span>—</span><span>—</span></div>
+        <div class="row" id="paysend"><span>PaySend</span><span>—</span><span>—</span><span>—</span></div>
+        <div class="row" id="instarem"><span>InstaReM</span><span>—</span><span>—</span><span>—</span></div>
+        <div class="row" id="remit2india"><span>Remit2India</span><span>—</span><span>—</span><span>—</span></div>
       </div>
     </section>
 
-    <section class="meta">
-      <p>🕒 Updated at <span id="time"></span> GMT</p>
-      <p class="note">Rates are indicative and for information only.</p>
+    <section class="disclaimer">
+      Rates are indicative only and do not constitute financial advice.
     </section>
   </main>
 
-  <footer>© 2025 Prime Converter • Powered by clarity & speed</footer>
+  <footer class="site-footer">
+    © 2025 Prime Converter • Built for clarity, speed & transparency
+  </footer>
+
   <script src="script.js"></script>
 </body>
 </html>

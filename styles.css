@@ -1,15 +1,158 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
-  padding: 20px;
-  background: #f4f7fa;
-  color: #222;
+  padding: 0;
+  background: #f4f7fb;
+  color: #111;
+}
+
+header {
+  text-align: center;
+  background: #0a3d91;
+  color: white;
+  padding: 1.5rem 1rem;
 }
 
 h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.tagline {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+}
+
+.converter-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.converter-card h2 {
+  margin-top: 0;
+  text-align: center;
   color: #0a3d91;
 }
 
-p {
-  font-size: 1.1rem;
+.converter-card label {
+  font-weight: 600;
+}
+
+.converter-card input,
+.converter-card select {
+  width: 100%;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.dropdowns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#swap {
+  font-size: 1.2rem;
+  padding: 0.5rem 0.8rem;
+  border: none;
+  background: #0a3d91;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#convert {
+  width: 100%;
+  background: #0a3d91;
+  color: white;
+  font-weight: bold;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#convert:hover {
+  background: #09407e;
+}
+
+#result {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.rate-text {
+  font-size: 1rem;
+  margin: 0.2rem 0;
+}
+
+.broker {
+  color: #b22222;
+}
+
+.spread {
+  color: #0a3d91;
+  font-weight: 600;
+  margin-top: 0.8rem;
+}
+
+.compare-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  max-width: 420px;
+  width: 100%;
+}
+
+.compare-section h3 {
+  margin-top: 0;
+  color: #0a3d91;
+}
+
+#providers {
+  list-style: none;
+  padding: 0;
+}
+
+#providers li {
+  margin: 0.5rem 0;
+}
+
+#details {
+  width: 100%;
+  background: #e6ecf5;
+  color: #0a3d91;
+  font-weight: 600;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-top: 0.8rem;
+  cursor: pointer;
+}
+
+footer {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  background: #0a3d91;
+  color: white;
+  margin-top: 2rem;
 }
